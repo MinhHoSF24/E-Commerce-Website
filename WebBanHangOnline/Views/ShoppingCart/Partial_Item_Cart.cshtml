@@ -1,0 +1,60 @@
+﻿@model IEnumerable<WebBanHangOnline.Models.ShoppingCartItem>
+
+<table class="table">
+    <tr class="text-center">
+        <th>STT</th>
+        <th>Product image</th>
+        <th>Product name</th>
+        <th>Category name</th>
+        <th>Price</th>
+        <th style="width: 100px">Quantity</th>
+        <th>Total</th>
+        <th style="width:120px">
+
+        </th>
+    </tr>
+    @if (Model != null && Model.Any())
+    {
+        var i = 0;
+        var tongtien = decimal.Zero;
+        foreach (var item in Model)
+        {
+            tongtien += item.TotalPrice;
+            <tr class="text-center" id="trow_@item.ProductId">
+                <td>@(i + 1)</td>
+                <td><img src="@item.ProductImg" /></td>
+                <td><a href="/detail/@item.Alias-p@(item.ProductId)">@item.ProductName</a></td>
+                <td>@item.CategoryName</td>
+                <td>@item.Price</td>
+                <td><input type="number" class="form-control" id="Quantity_@item.ProductId" value="@item.Quantity" /></td>
+                <th>@item.TotalPrice</th>
+                <td>
+                    <a href="#" data-id="@item.ProductId" class="btn btn-sm btn-danger btnDelete">Delete</a>
+                    <a href="#" data-id="@item.ProductId" class="btn btn-sm btn-success btnUpdate">Update</a>
+                </td>
+            </tr>
+            i++;
+        }
+        <tr>
+            <th colspan="6" class="text-right">Total: </th>
+            <th class="text-center">@tongtien</th>
+            <th></th>
+        </tr>
+        <tr>
+            <th colspan="6" class="text-right"></th>
+            <th></th>
+            <th class="text-center" style="width: 200px">
+                <a href="#" class="btn btn-sm btn-danger btnDeleteAll">Delete</a>
+                <a href="/check-out" class="btn btn-sm btn-success">Place Order</a>
+            </th>
+
+        </tr>
+        
+    }
+    else
+    {
+        <tr>
+            <th colspan="7">Nothing in cart!!!</th>
+        </tr>
+    }
+</table>

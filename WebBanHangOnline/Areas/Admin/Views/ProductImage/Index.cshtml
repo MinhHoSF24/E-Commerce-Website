@@ -1,0 +1,115 @@
+﻿@model IEnumerable<WebBanHangOnline.Models.EF.ProductImage>
+@{
+    ViewBag.Title = "Product Image";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutEmpty.cshtml";
+}
+<style>
+    .glImage {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+    }
+
+        .glImage li {
+            display: inline-block;
+            position: relative;
+        }
+
+    .box-btn {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        margin-top: 100px;
+        text-align: center;
+    }
+
+    .glImage li img {
+        padding: 20px;
+    }
+</style>
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Product Image</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-danger" title="Collapse">
+                    Delete
+                </button>
+                <input type="button" class="btn btn-success" value="Upload more" onclick="BrowserServer('txtImage');" />
+            </div>
+        </div>
+        <div class="card-body">
+            <ul class="glImage">
+                @if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        <li id="trow_@item.Id">
+                            <img src="@item.Image" width="200" />
+                            <div class="box-btn">
+                                <a href="#" data-id="@item.Id" class="btn btn-sm btn-danger btnDelete"><i class="fa fa-trash"></i></a>
+                                @if (item.IsDefault)
+                                {
+                                    <a href="#" data-id="@item.Id" class="btn btn-sm btn-success btnDefault"><i class="fa fa-check"></i></a>
+                                }
+                                else
+                                {
+                                    <a href="#" data-id="@item.Id" class="btn btn-sm btn-warning btnDefault"><i class="fa fa-times"></i></a>
+                                }
+                            </div>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+        <!-- /.card-body -->
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+
+<script>
+    function BrowserServer(field) {
+        var finder = new CKFinder();
+        finder.selectActionFunction = function (fileUrl) {
+            AddImage(@ViewBag.productId,fileUrl);
+        };
+        finder.popup();
+    }
+    function AddImage(id, url) {
+        $.ajax({
+            url: '/admin/ProductImage/AddImage',
+            type: 'POST',
+            data: { productId: id, url: url },
+            success: function (rs) {
+                if (rs.Success) {
+                    window.location.reload();
+                }
+            }
+        });
+    }
+    $(document).ready(function () {
+        $('body').on('click', '.btnDelete', function () {
+            var id = $(this).data('id');
+            var conf = confirm("Are you want to delete?");
+            if (conf == true) {
+                $.ajax({
+                    url: '/admin/ProductImage/delete',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (rs) {
+                        if (rs.success) {
+                            $('#trow_' + id).remove();
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>

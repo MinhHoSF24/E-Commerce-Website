@@ -1,0 +1,139 @@
+﻿@model PagedList.PagedList<WebBanHangOnline.Models.EF.News>
+@using PagedList;
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "News";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@section naviheader{
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/Admin/Home/Index" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/news" class="nav-link">@ViewBag.Title</a>
+        </li>
+    </ul>
+
+
+
+}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>News Management</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">News</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+        <!-- Default box -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">News</h3>
+
+                <div class="card-tools">
+                    <a href="/admin/news/add" class="btn btn-primary">Add new</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        @using (Html.BeginForm("index", "News", FormMethod.Get, new { }))
+                        {
+                            <div class="input-group input-group-sm" style="width: 100%">
+                           
+                                @Html.TextBox("SearchText")
+                                <span class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </span>
+                         
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center">STT</th>
+                            <th class="text-center">Image</th>
+                            <th class="text-center">News title</th>
+                            <th class="text-center">Create Date</th>
+                            <th class="text-center">Display</th>
+                            <th class="text-center">Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
+                            foreach (var item in Model)
+                            {
+                                var strCheck = item.IsActive ? "<a href='#'><i class='fa fa-check text-success'></i></a>" : "<a href='#'><i class='fas fa-times text-danger '></i></a>";
+                                <tr>
+                                    <td class="text-center">@i</td>
+                                    <td class="text-center"><img src="@item.Image" width="50" /></td>
+                                    <td>@item.Title</td>
+                                    <td class="text-center">@item.CreatedDate.ToString("dd-MM-yyyy")</td>
+                                    <td class="text-center">
+                                        @Html.Raw(strCheck)
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="/admin/news/edit/@item.Id" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="/admin/news/delete/@item.Id" onclick="confirm('Do you want to delete?')" class="btn btn-sm btn-danger">Delete</a>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                i++;
+                            }
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4">No record!!</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6" style="text-align:right">
+                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+
+            </div>
+            <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
